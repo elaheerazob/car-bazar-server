@@ -35,6 +35,45 @@ async function run () {
           const cars = await carsCollection.findOne(query);
           res.send(cars);
       });
+
+      //update
+      app.put('/cars/:id', async(req,res) =>{
+        const id =req.params.id;
+        const oldQuantity =parseInt(req.query.oldQuantity);
+        const updateCars = req.body;
+        const filter = {_id: ObjectId(id)};
+        const options ={upsert: true};
+        const updateDoc = {
+          $set : {
+            quantity: parseInt(updateCars.quantity) + parseInt(oldQuantity)
+          }
+        };
+        const result = await carsCollection.updateOne(filter,updateDoc,options);
+        res.send(result);
+      })
+
+      //decrising one by one
+
+    app.put("/cars/:id", async (req, res) => {
+      const id = req.params.id;
+      const oldQuantity = parseInt(req.query.oldQuantity);
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const uDoc = {
+        $set: {
+          quantity: parseInt(oldQuantity) - 1,
+        },
+      };
+      const result = await dataCollection.updateOne(filter, uDoc, options);
+      res.send(result);
+    });
+
+    //post 
+    app.post("/cars", async (req, res) => {
+      const cars = req.body;
+      const products = await carsCollection.insertOne(cars);
+      res.send(products);
+    });
     }
     finally{
 

@@ -51,7 +51,22 @@ async function run() {
       res.send(result);
     });
 
-   
+    //put
+    app.put("/data/:id", async (req, res) => {
+      const id = req.params.id;
+      const oldQuantity = parseInt(req.query.oldQuantity);
+      console.log(oldQuantity);
+      const uUser = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const uDoc = {
+        $set: {
+          quantity: parseInt(uUser.quantity) + parseInt(oldQuantity),
+        },
+      };
+      const result = await carsCollection.updateOne(filter, uDoc, options);
+      res.send(result);
+    });
 
     //decrising one by one
 
